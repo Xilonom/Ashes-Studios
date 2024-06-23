@@ -5,16 +5,23 @@ using UnityEngine.UI;
 public class PickUp : MonoBehaviour
 {
     public Item item;
-    public InventoryManager inventory;
+    private InventoryManager inventory;
 
     private bool given = false;
 
 
 
-    void Update() 
-     {
 
+     void Awake() 
+     {
+        inventory = GameObject.Find("InventoryManager").GetComponent<InventoryManager>();
+
+       
      }
+    void Update() 
+    {
+
+    }
     void OnTriggerEnter2D(Collider2D other) 
     {
         if (other.CompareTag("Player"))

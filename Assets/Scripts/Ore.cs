@@ -6,7 +6,7 @@ public class Ore : MonoBehaviour
 {
     public int Health = 5;
 
-    public bool Triggered = false;
+    public bool CanBreak = false;
 
     public GameObject ore;
 
@@ -14,22 +14,26 @@ public class Ore : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other) 
     {
-        if (other.CompareTag("Pickaxe"))
+        if (GameObject.Find("PlayerPickaxe") != null)
         {
-        Triggered = true;
+        CanBreak = true;
         }
     }
     void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Pickaxe"))
-        {
-        Triggered = false;
-        }
+
+        
+        CanBreak = false;
+        
     }
 
 void Update()
 {
-    if (Triggered == true)
+      if (GameObject.Find("PlayerPickaxe") == null)
+      {
+        CanBreak = false;
+      }
+    if (CanBreak == true)
     {
          if (Input.GetMouseButtonDown(0))
         {
