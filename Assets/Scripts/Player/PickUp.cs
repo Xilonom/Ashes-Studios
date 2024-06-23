@@ -4,39 +4,51 @@ using UnityEngine;
 using UnityEngine.UI;
 public class PickUp : MonoBehaviour
 {
-    public Sprite ItemImage;
-    public string itemName;
-
-    public GameObject Parent;
-    public float Stack;
-
+    public Item item;
     public InventoryManager inventory;
 
-   public void OnTriggerEnter2D(Collider2D other) 
-   {
-    if (other.CompareTag("Player"))
+    private bool given = false;
+
+
+
+    void Update() 
+     {
+
+     }
+    void OnTriggerEnter2D(Collider2D other) 
     {
-        for(int i = 0; i < inventory.Slots.Length; i++)
+        if (other.CompareTag("Player"))
         {
-            if (inventory.ItemType[i] == itemName || inventory.ItemType[i] == "none")
+         for (int i = 0;i < inventory.Slots.Length;i++)
+         {
+
+            if (inventory.items[i] != null)
             {
-
-            
-            inventory.ItemType[i] = itemName;
-            inventory.NumberInStack[i] += Stack;
-            inventory.Slots[i].GetComponent<Image>().sprite = ItemImage;
-                        Destroy(Parent);
-            break;
-
-
+             if (inventory.items[i].Name == item.Name)
+                {
+                    inventory.Stack[i] += 1;
+                    given = true;
+                    Destroy(gameObject);
+                    break;
+                }
+            }
+         }
+          for(int i = 0; i < inventory.Slots.Length; i++)
+          {
+            if (given == false)
+            {
+            if (inventory.items[i] == null)
+            {
+                inventory.ItemImages[i].SetActive(true);
+                inventory.ItemImages[i].GetComponent<Image>().sprite = item.ItemImage;
+                inventory.items[i] = item;
+                inventory.Stack[i] += 1;
+                Destroy(gameObject);
+                break;
+            }
             }
 
+         }
         }
-
-    }
-   }
-    void Update()
-    {
-        
     }
 }
