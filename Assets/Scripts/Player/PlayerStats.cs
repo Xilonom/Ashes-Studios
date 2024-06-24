@@ -1,31 +1,57 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
+
 public class PlayerStats : MonoBehaviour
 {
 
-    public float health = 100;
-    public Image HealthBar;
-    public GameObject player;
+    [SerializeField] private float _health = 100;
+    [SerializeField] private Image HealthBar;
+    [SerializeField] private GameObject player;
+
+    public float Health
+    {
+        get { return _health; }
+        set { _health = value; }
+    }
 
     void Start()
     {
         
     }
 
-
     void Update()
     {
-        HealthBar.fillAmount = health/100;
+        
     }
 
-    public void ChangeHealth(float value)
+    void UpdatePlayerHpUI()
     {
-        health += value;
+        HealthBar.fillAmount = _health/100;
     }
 
+    public void AddHealth(float value)
+    {
+        Health += value;
+        UpdatePlayerHpUI();
+    }
 
+    public void RemoveHealth(float value)
+    {
+        if (_health > 0)
+        {
+            Health -= value;
+            UpdatePlayerHpUI();
+        }
+        else
+        {
+            Die();
+        }
+        
+    }
+
+    void Die()
+    {
+        Debug.Log("You died!");
+    }
     
 }
