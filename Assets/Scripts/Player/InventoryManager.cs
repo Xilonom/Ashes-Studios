@@ -1,182 +1,100 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 public class InventoryManager : MonoBehaviour
 {
+    [Serializable]
+    class Slot
+    {
+        private enum ItemType
+        {
+            None = 0,
+            Tool = 1,
+            Resource = 32
+        }
 
+        [SerializeField] private int _slotNumber;
+        private Sprite _defaultItemImage;
+        [SerializeField] private Sprite _currentItemImage;
+        [SerializeField] private bool _isEmpty = true;
+        [SerializeField] private int _currentItemAmount = 0;
+        [SerializeField] private int _maxItemAmount;
+        [SerializeField] private GameObject _currentItem;
+        [SerializeField] private Text _currentItemAmountUI;
+        [SerializeField] private ItemType _itemType = ItemType.None;
 
-    public GameObject[] ItemImages;
-    public GameObject[] Slots;  
+        public bool IsEmpty 
+        { 
+            get { return _isEmpty; }
+        }
 
-    public Sprite SelectImage;
+        public int SlotNumber
+        {
+            get { return _slotNumber; }
+        }
+    }
 
-    public Sprite DefaultImage;
+    //public GameObject[] ItemImages;
+    [SerializeField] private GameObject _inventoryUI;
+    [SerializeField] private Slot[] _slots = new Slot[3];  
+    
 
-    private GameObject Player;
-
-    public Item[] items;
-    public Text[] Counters;
-    public int[] Stack;
-
-    public bool[] SlotEquipped;
-
+    private GameObject _player;
 
     void Start()
     {
-        GameObject[] PlayerTag = GameObject.FindGameObjectsWithTag("Player");
-
-        Player = PlayerTag[0];
-        
+        _player = gameObject;  
     }
 
-
-    void FixedUpdate()
+    int CheckForEmptySlots()
     {
-          for(int i = 0; i < Slots.Length; i++)
-          {
-            Counters[i].text = Stack[i].ToString();
-          }
-
-        for(int i = 0; i < Slots.Length; i++)
+        foreach(var slot in _slots)
         {
-            if (Stack[i] == 0)
-            {
-                ItemImages[i].SetActive(false);
-                items[i] = null;
-            }
-            else
-            {
-                ItemImages[i].SetActive(true);
-            }
+            if(slot.IsEmpty)
+                return slot.SlotNumber;
         }
+
+        return -1;
     }
 
+    public void PickUp(GameObject item)
+    {
+        int tempEmptySlotNumber = CheckForEmptySlots();
 
-    
+        if(tempEmptySlotNumber == -1)
+        {
+            Debug.Log("Can't pickup this item!");
+            return;
+        }
+
+
+    }
 
     void EquipSlot()
     {
-        if (Input.GetKeyDown("1"))
-        {
-            for (int i = 0; i < Slots.Length; i++)
-            {
-                SlotEquipped[i] = false;
-            }
-            SlotEquipped[0] = true;
-        }
-        if (Input.GetKeyDown("2"))
-        {
-            for (int i = 0; i < Slots.Length; i++)
-            {
-                SlotEquipped[i] = false;
-            }
-            SlotEquipped[1] = true;
-        }
-        if (Input.GetKeyDown("3"))
-        {
-            for (int i = 0; i < Slots.Length; i++)
-            {
-                SlotEquipped[i] = false;
-            }
-            SlotEquipped[2] = true;
-        }
+
     }
 
     void SelectSlot()
     {
-         for (int i = 0;i < SlotEquipped.Length; i++)
-             {
-                if (SlotEquipped[i] == true)
-                {
-                    Slots[i].GetComponent<Image>().sprite = SelectImage;
-                }
-                else
-                {
-                    Slots[i].GetComponent<Image>().sprite = DefaultImage;
-                }
-             }
+
     }
 
 
 
     void CheckForEquip()
     {
-         for (int i = 0;i < items.Length; i++)
-            {
-                if (SlotEquipped[i] == true)
-                {
-                    CheckItem(i);
-                }
-                if (SlotEquipped[i] == false)
-                {
-                    if (items[i] != null)
-                    {
-                        if (items[i].Type != null)
-                        {
-                        if (items[i].Type == "pickaxe") 
-                        {
-                            Destroy(GameObject.Find("PlayerPickaxe"));
-                        }
-                        }
-                }
-                }
-            }
-            
+
     }
 
     void CheckItem(int Slot)
     {
 
-        if (items[Slot] != null)
-        {
-        if (items[Slot].Type != null)
-        {
-
-            if (items[Slot].Type == "building")
-            {
-                if (Input.GetMouseButtonDown(0))
-                {
-               
-                
-                var mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                mouseWorldPos.z = 0f;
-                Stack[Slot] -= 1;
-                Instantiate(items[Slot].ObjectPrefab, mouseWorldPos, Quaternion.identity);
-                
-                }
-            }
-            if (items[Slot].Type == "pickaxe")
-            {
-
-
-                if (GameObject.Find("PlayerPickaxe") == null)
-                {
-                    GameObject pickaxe = Instantiate(items[Slot].ObjectPrefab, Player.transform.position + new Vector3(0.85f,0,0), Quaternion.identity);
-
-                    pickaxe.name = "PlayerPickaxe";
-
-                  
-
-                }
-                GameObject.Find("PlayerPickaxe").transform.position = Player.transform.position + new Vector3(0.85f,0,0);
-               
-
-            }
-
-
-
-
-
-        }
-        }
     }
 
     void Update()
     {
-        EquipSlot();
 
-        CheckForEquip();
-        SelectSlot();
     }
 }

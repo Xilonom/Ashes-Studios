@@ -4,58 +4,19 @@ using UnityEngine;
 using UnityEngine.UI;
 public class PickUp : MonoBehaviour
 {
-    public Item item;
-    private InventoryManager inventory;
+    private InventoryManager _inventory;
 
-    private bool given = false;
-
-
-
-
-     void Awake() 
-     {
-        inventory = GameObject.Find("InventoryManager").GetComponent<InventoryManager>();
-
-       
-     }
-    void Update() 
+    void Awake() 
     {
-
+        _inventory = gameObject.GetComponent<InventoryManager>();
     }
+
     void OnTriggerEnter2D(Collider2D other) 
     {
-        if (other.CompareTag("Player"))
+        if (other.transform.gameObject.GetComponent<Item>() != null)
         {
-         for (int i = 0;i < inventory.Slots.Length;i++)
-         {
-
-            if (inventory.items[i] != null)
-            {
-             if (inventory.items[i].Name == item.Name)
-                {
-                    inventory.Stack[i] += 1;
-                    given = true;
-                    Destroy(gameObject);
-                    break;
-                }
-            }
-         }
-          for(int i = 0; i < inventory.Slots.Length; i++)
-          {
-            if (given == false)
-            {
-            if (inventory.items[i] == null)
-            {
-                inventory.ItemImages[i].SetActive(true);
-                inventory.ItemImages[i].GetComponent<Image>().sprite = item.ItemImage;
-                inventory.items[i] = item;
-                inventory.Stack[i] += 1;
-                Destroy(gameObject);
-                break;
-            }
-            }
-
-         }
+            _inventory.PickUp(other.transform.gameObject);
+            Destroy(other.transform.gameObject);
         }
     }
 }
