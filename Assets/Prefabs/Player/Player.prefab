@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 2031706836046812959}
   - component: {fileID: 5485957532391712398}
   - component: {fileID: 6862439874062960931}
+  - component: {fileID: 1936400742100363257}
+  - component: {fileID: 7261862682241241897}
   - component: {fileID: 3876417451655409475}
   - component: {fileID: 7660399758819614277}
-  - component: {fileID: 1936400742100363257}
   - component: {fileID: 7947466253865706508}
   m_Layer: 0
   m_Name: Player
@@ -105,6 +106,32 @@ MonoBehaviour:
   direction: {x: 0, y: 0}
   rb: {fileID: 3876417451655409475}
   PlrAnimator: {fileID: 7660399758819614277}
+--- !u!114 &1936400742100363257
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7232293871017872712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bae06673e60e597dabdd16477bf0606, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _inventoryUI: {fileID: 0}
+  _slots: []
+--- !u!114 &7261862682241241897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7232293871017872712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26e8a87f7f7466058800d1fac964eb74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!50 &3876417451655409475
 Rigidbody2D:
   serializedVersion: 4
@@ -153,20 +180,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &1936400742100363257
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7232293871017872712}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7bae06673e60e597dabdd16477bf0606, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _inventoryUI: {fileID: 0}
-  _slots: []
 --- !u!61 &7947466253865706508
 BoxCollider2D:
   m_ObjectHideFlags: 0

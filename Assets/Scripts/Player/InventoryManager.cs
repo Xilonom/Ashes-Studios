@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 public class InventoryManager : MonoBehaviour
 {
+    [SerializeField] private GameObject _inventoryUI;
+
     [Serializable]
     class Slot
     {
@@ -21,7 +23,7 @@ public class InventoryManager : MonoBehaviour
         [SerializeField] private int _currentItemAmount = 0;
         [SerializeField] private int _maxItemAmount;
         [SerializeField] private GameObject _currentItem;
-        [SerializeField] private Text _currentItemAmountUI;
+        [SerializeField] private GameObject _currentItemAmountUI;
         [SerializeField] private ItemType _itemType = ItemType.None;
 
         public bool IsEmpty 
@@ -33,11 +35,55 @@ public class InventoryManager : MonoBehaviour
         {
             get { return _slotNumber; }
         }
+
+        public Sprite CurrentItemImage
+        {
+            get { return _currentItemImage; }
+            set { _currentItemImage = value; }
+        }
+
+        public Slot(int slotNumber, Sprite currentItemImage, bool isEmpty, GameObject currentItem, int itemType, GameObject inventoryUI)
+        {
+            _slotNumber = slotNumber;
+            _currentItemImage = currentItemImage;
+            _isEmpty = isEmpty;
+            _currentItem = currentItem;
+            _itemType = (ItemType)itemType;
+
+            
+            foreach (Transform childUI in inventoryUI.transform)
+            {
+                Debug.Log(childUI.name);
+                if (childUI.name == $"Slot{slotNumber}")
+                {
+                    _currentItemAmountUI = childUI.gameObject;
+                    break;
+                }
+            }
+
+            GameObject slotText = _currentItemAmountUI.transform.GetChild(1).gameObject;
+
+            GameObject slotImage = _currentItemAmountUI.transform.GetChild(0).gameObject;
+            slotImage.GetComponent<Image>().sprite = _currentItemImage;
+
+            if (_itemType == ItemType.Tool)
+            {
+                _currentItemAmount = 1;
+                _maxItemAmount = 1;
+                slotText.GetComponent<Text>().text = _currentItemAmount.ToString();
+            }
+            else if (_itemType == ItemType.Resource)
+            {
+                _currentItemAmount = 1;
+                _maxItemAmount = (int)ItemType.Resource;
+                slotText.GetComponent<Text>().text = _currentItemAmount.ToString();
+            }
+        }
     }
 
     //public GameObject[] ItemImages;
-    [SerializeField] private GameObject _inventoryUI;
-    [SerializeField] private Slot[] _slots = new Slot[3];  
+    
+    [SerializeField] private Slot[] _slots;  
     
 
     private GameObject _player;
@@ -51,7 +97,7 @@ public class InventoryManager : MonoBehaviour
     {
         foreach(var slot in _slots)
         {
-            if(slot.IsEmpty)
+            if(slot.IsEmpty == true)
                 return slot.SlotNumber;
         }
 
@@ -64,11 +110,20 @@ public class InventoryManager : MonoBehaviour
 
         if(tempEmptySlotNumber == -1)
         {
-            Debug.Log("Can't pickup this item!");
+            Debug.Log("Can't pickup this item! No empty inventory slots!");
             return;
         }
 
+        var itemComponent = item.GetComponent<Item>();
 
+        _slots[tempEmptySlotNumber - 1] = new Slot(tempEmptySlotNumber, 
+                                                   itemComponent.ItemImage, 
+                                                   false, 
+                                                   item,
+                                                   itemComponent.ThisItemType,
+                                                   _inventoryUI);
+        
+        item.SetActive(false);
     }
 
     void EquipSlot()

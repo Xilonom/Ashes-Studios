@@ -11,12 +11,12 @@ public class PickUp : MonoBehaviour
         _inventory = gameObject.GetComponent<InventoryManager>();
     }
 
-    void OnTriggerEnter2D(Collider2D other) 
+    void OnCollisionEnter2D(Collision2D col)
     {
-        if (other.transform.gameObject.GetComponent<Item>() != null)
+        if (col.transform.gameObject.GetComponent<Item>() != null)
         {
-            _inventory.PickUp(other.transform.gameObject);
-            Destroy(other.transform.gameObject);
+            _inventory.PickUp(col.transform.gameObject);
+            // Destroy(col.transform.gameObject);
         }
     }
 }
