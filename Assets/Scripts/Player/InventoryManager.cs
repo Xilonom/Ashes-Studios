@@ -4,7 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 public class InventoryManager : MonoBehaviour
 {
+    [Header("UI Elements")]
     [SerializeField] private GameObject _inventoryUI;
+    [SerializeField] private Sprite _unselectedSlotImage;
+    [SerializeField] private Sprite _selectedSlotImage;
+    [SerializeField] private int _activeSlotIndex;
+    
+
+    private string _pressedKeyName = "";
 
     [Serializable]
     class Slot
@@ -13,6 +20,7 @@ public class InventoryManager : MonoBehaviour
         {
             None = 0,
             Tool = 1,
+            CraftSource = 2,
             Resource = 32
         }
 
@@ -23,6 +31,7 @@ public class InventoryManager : MonoBehaviour
         [SerializeField] private int _currentItemAmount = 0;
         [SerializeField] private int _maxItemAmount;
         [SerializeField] private GameObject _currentItem;
+        [SerializeField] private string _currentItemName;
         [SerializeField] private GameObject _currentItemAmountUI;
         [SerializeField] private ItemType _itemType = ItemType.None;
 
@@ -42,6 +51,33 @@ public class InventoryManager : MonoBehaviour
             set { _currentItemImage = value; }
         }
 
+        public int CurrentItemAmount
+        {
+            get { return _currentItemAmount; }
+            set { _currentItemAmount = value; }
+        }
+
+        public int MaxItemAmount
+        {
+            get { return _maxItemAmount; }
+        }
+
+        public string CurrentItemName
+        {
+            get { return _currentItemName; }
+        }
+
+        public GameObject CurrentItem
+        {
+            get { return _currentItem; }
+        }
+
+        public GameObject CurrentItemAmountUI
+        {
+            get { return _currentItemAmountUI; }
+            set { _currentItemAmountUI = value; }
+        }
+
         public Slot(int slotNumber, Sprite currentItemImage, bool isEmpty, GameObject currentItem, int itemType, GameObject inventoryUI)
         {
             _slotNumber = slotNumber;
@@ -49,7 +85,7 @@ public class InventoryManager : MonoBehaviour
             _isEmpty = isEmpty;
             _currentItem = currentItem;
             _itemType = (ItemType)itemType;
-
+            _currentItemName = (string)currentItem.GetComponent<Item>().Name;
             
             foreach (Transform childUI in inventoryUI.transform)
             {
@@ -106,24 +142,39 @@ public class InventoryManager : MonoBehaviour
 
     public void PickUp(GameObject item)
     {
-        int tempEmptySlotNumber = CheckForEmptySlots();
+        var checkSlot = IsItemInInventory(item);
 
-        if(tempEmptySlotNumber == -1)
+        if (checkSlot == -1)
         {
-            Debug.Log("Can't pickup this item! No empty inventory slots!");
-            return;
+            int tempEmptySlotNumber = CheckForEmptySlots();
+
+            if(tempEmptySlotNumber == -1)
+            {
+                Debug.Log("Can't pickup this item! No empty inventory slots!");
+                return;
+            }
+
+            var itemComponent = item.GetComponent<Item>();
+
+            _slots[tempEmptySlotNumber - 1] = new Slot(tempEmptySlotNumber, 
+                                                    itemComponent.ItemImage, 
+                                                    false, 
+                                                    item,
+                                                    itemComponent.ThisItemType,
+                                                    _inventoryUI);
+            
+            item.SetActive(false);
+        }
+        else
+        {
+            if(IsStackFull(_slots[checkSlot - 1]) == false)
+            {
+                _slots[checkSlot - 1].CurrentItemAmount++;
+                _slots[checkSlot - 1].CurrentItemAmountUI.transform.GetChild(1).GetComponent<Text>().text = _slots[checkSlot - 1].CurrentItemAmount.ToString();
+                item.SetActive(false);
+            }
         }
 
-        var itemComponent = item.GetComponent<Item>();
-
-        _slots[tempEmptySlotNumber - 1] = new Slot(tempEmptySlotNumber, 
-                                                   itemComponent.ItemImage, 
-                                                   false, 
-                                                   item,
-                                                   itemComponent.ThisItemType,
-                                                   _inventoryUI);
-        
-        item.SetActive(false);
     }
 
     void EquipSlot()
@@ -131,25 +182,66 @@ public class InventoryManager : MonoBehaviour
 
     }
 
-    void SelectSlot()
+    void SelectSlot(string keyName)
     {
+        int tempKey;
 
+        bool isNumeric = int.TryParse(keyName, out tempKey);
+        
+        if (isNumeric == false)
+            return;
+
+        if (1 <= tempKey && tempKey <= 3)
+        {
+            _activeSlotIndex = Convert.ToInt32(keyName);
+
+            UnselectAllSlots();
+
+            GameObject selectedSlot = _inventoryUI.transform.GetChild(_activeSlotIndex - 1).gameObject;
+            selectedSlot.GetComponent<Image>().sprite = _selectedSlotImage;
+        }
     }
 
-
+    void UnselectAllSlots()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            _inventoryUI.transform.GetChild(i).gameObject.GetComponent<Image>().sprite = _unselectedSlotImage;
+        }
+    }
 
     void CheckForEquip()
     {
 
     }
 
-    void CheckItem(int Slot)
+    int IsItemInInventory(GameObject item)
     {
+        Debug.Log(item.GetComponent<Item>().Name);
+        foreach(Slot currentSlot in _slots)
+        {
+            if (currentSlot.CurrentItem == null)
+                continue;
 
+            if (currentSlot.CurrentItemName == item.GetComponent<Item>().Name)
+                return currentSlot.SlotNumber;  // && IsStackFull(currentSlot) == false)
+        }
+
+        return -1;
+    }
+
+    bool IsStackFull(Slot currentSlot)
+    {
+        return (currentSlot.CurrentItemAmount >= currentSlot.MaxItemAmount);
     }
 
     void Update()
     {
+        _pressedKeyName = Input.inputString;
+
+        SelectSlot(_pressedKeyName);
+        
+
 
     }
 }

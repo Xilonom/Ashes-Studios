@@ -8,6 +8,7 @@ public class Item : MonoBehaviour
         {
             None = 0,
             Tool = 1,
+            CraftSource = 2,
             Resource = 32
         }
    [SerializeField] private ItemType _type = ItemType.None;
