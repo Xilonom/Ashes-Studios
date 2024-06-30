@@ -19,6 +19,8 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+  
+
         direction.x = Input.GetAxisRaw("Horizontal");
         direction.y = Input.GetAxisRaw("Vertical");
 
@@ -50,4 +52,5 @@ public class PlayerMovement : MonoBehaviour
     {
         rb.MovePosition(rb.position + direction * speed * Time.fixedDeltaTime);
     }
+
 }
