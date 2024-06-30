@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerStats : MonoBehaviour
 {
@@ -51,7 +52,7 @@ public class PlayerStats : MonoBehaviour
 
     void Die()
     {
-        Debug.Log("You died!");
+        SceneManager.LoadScene("GameOver");
     }
     
 }

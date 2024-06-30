@@ -75,13 +75,11 @@ public class PlayerMovement : MonoBehaviour
        
         if (_playerState == State.Walk && _stepsSource.isPlaying == false)
         {
-            Debug.Log("Start play");
             _stepsSource.Play();
         }
-        
+
         if (_playerState == State.Stay)
         {
-            Debug.Log("Stop play");
             _stepsSource.Stop();
         }
     }

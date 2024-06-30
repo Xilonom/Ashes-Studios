@@ -8,7 +8,7 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private GameObject _inventoryUI;
     [SerializeField] private Sprite _unselectedSlotImage;
     [SerializeField] private Sprite _selectedSlotImage;
-    [SerializeField] private int _activeSlotIndex;
+    [SerializeField] private int _activeSlotIndex = 1;
     
 
     private string _pressedKeyName = "";
@@ -76,6 +76,11 @@ public class InventoryManager : MonoBehaviour
         {
             get { return _currentItemAmountUI; }
             set { _currentItemAmountUI = value; }
+        }
+
+        public int CurrentItemType
+        {
+            get { return Convert.ToInt32(_itemType); }
         }
 
         public Slot(int slotNumber, Sprite currentItemImage, bool isEmpty, GameObject currentItem, int itemType, GameObject inventoryUI)
@@ -241,7 +246,10 @@ public class InventoryManager : MonoBehaviour
 
         SelectSlot(_pressedKeyName);
         
-
+        if (_activeSlotIndex != 0 && _slots[_activeSlotIndex-1].CurrentItemType == 1)
+        {
+            Debug.Log("Tool is active");
+        }
 
     }
 }
