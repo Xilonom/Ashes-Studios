@@ -13,6 +13,9 @@ public class Interaction : MonoBehaviour
         }
 
     private InventoryManager _inventory;
+    private bool _isPressedLMB = false;
+    private bool _canGrind = false;
+    private GrindItem _currentGrindItem = null;
 
     void Awake() 
     {
@@ -31,9 +34,30 @@ public class Interaction : MonoBehaviour
             }
             else if (currentItem.ThisItemType == (int)ItemType.CraftSource)
             {
-
+                if (_inventory.IsCraftTool())
+                {
+                    _canGrind = true;
+                    _currentGrindItem = col.transform.GetComponent<GrindItem>();
+                    print(_currentGrindItem);
+                }
             }
             // Destroy(col.transform.gameObject);
         }
+    }
+
+    void Grind(bool keyName)
+    {
+        if (_currentGrindItem != null && keyName == true)
+        {
+            print("Start grind");
+            _currentGrindItem.BreakPart();
+        }
+    }
+
+    void Update()
+    {
+        _isPressedLMB = Input.GetMouseButtonDown(0);
+
+        Grind(_isPressedLMB);
     }
 }

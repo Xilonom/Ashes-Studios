@@ -10,6 +10,8 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private Sprite _selectedSlotImage;
     [SerializeField] private int _activeSlotIndex = 1;
     
+    private GameObject _leftHand;
+    private GameObject _rightHand;
 
     private string _pressedKeyName = "";
 
@@ -121,17 +123,16 @@ public class InventoryManager : MonoBehaviour
             }
         }
     }
-
-    //public GameObject[] ItemImages;
     
     [SerializeField] private Slot[] _slots;  
     
-
     private GameObject _player;
 
     void Start()
     {
-        _player = gameObject;  
+        _player = gameObject;
+        _leftHand = gameObject.transform.GetChild(0).gameObject;
+        _rightHand = gameObject.transform.GetChild(1).gameObject;
     }
 
     int CheckForEmptySlots()
@@ -190,6 +191,7 @@ public class InventoryManager : MonoBehaviour
     void SelectSlot(string keyName)
     {
         int tempKey;
+        var leftHandSpriteRenderer = _leftHand.GetComponent<SpriteRenderer>();
 
         bool isNumeric = int.TryParse(keyName, out tempKey);
         
@@ -204,6 +206,16 @@ public class InventoryManager : MonoBehaviour
 
             GameObject selectedSlot = _inventoryUI.transform.GetChild(_activeSlotIndex - 1).gameObject;
             selectedSlot.GetComponent<Image>().sprite = _selectedSlotImage;
+        }
+
+        if (_activeSlotIndex != 0 && _slots[_activeSlotIndex-1].CurrentItemType == 1)
+        {
+            leftHandSpriteRenderer.sprite = _slots[_activeSlotIndex-1].CurrentItemImage;
+        }
+
+        if (_activeSlotIndex != 0 && _slots[_activeSlotIndex-1].CurrentItemType != 1)
+        {
+            leftHandSpriteRenderer.sprite = null;
         }
     }
 
@@ -240,16 +252,22 @@ public class InventoryManager : MonoBehaviour
         return (currentSlot.CurrentItemAmount >= currentSlot.MaxItemAmount);
     }
 
+    public bool IsCraftTool()
+    {
+        if (_activeSlotIndex != 0 && _slots[_activeSlotIndex-1].CurrentItemType == 1)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     void Update()
     {
         _pressedKeyName = Input.inputString;
-
-        SelectSlot(_pressedKeyName);
         
-        if (_activeSlotIndex != 0 && _slots[_activeSlotIndex-1].CurrentItemType == 1)
-        {
-            Debug.Log("Tool is active");
-        }
-
+        SelectSlot(_pressedKeyName);
     }
 }
